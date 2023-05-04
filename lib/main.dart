@@ -33,6 +33,8 @@ Future<void> main() async {
 
 Future<void> test(Benchmark bm) async {
   print(bm.name);
-  await bm.runAll();
+  final results = await bm.runAll();
+  print('');
+  print('\nTest,${bm.name}\n${results.toCsv()}');
   print('');
 }

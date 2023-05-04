@@ -13,6 +13,10 @@ class BenchmarkResult {
   String toString() {
     return "$test: ${duration.inMilliseconds / 1000.0}s";
   }
+
+  String toCsv() {
+    return "$test,${duration.inMilliseconds}";
+  }
 }
 
 class BenchmarkResults {
@@ -29,6 +33,11 @@ class BenchmarkResults {
   @override
   String toString() {
     return results.map((r) => r.toString()).join('\n');
+  }
+
+  @override
+  String toCsv() {
+    return results.map((r) => r.toCsv()).join('\n');
   }
 }
 

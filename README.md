@@ -5,6 +5,23 @@ A project to compare performance between various databases on Flutter.
 
 The benchmarks are loosely based on old [SQLite benchmarks](https://www.sqlite.org/speed.html).
 
+## Test Notes
+
+Since the tests are based on ones from SQLite, the operations used may favor SQLite in some cases.
+For example, copying data from one table to another (Test 11) is a native operation using a single query in SQLite,
+while this requires separately querying and inserting data in Isar and ObjectBox.
+
+On specific tests:
+
+Test 1: This does individual inserts - no batching or transactions. This is not recommended for large volumes,
+but does demonstrate the overhead per transaction.  The WAL journal mode on SQLite gives it an advantage on this test.
+
+Test 6: Not present, since it only creates indexes, which are avoided in these benchmarks.
+
+Test 7: This tests a "between" operation on an indexed column (WHERE b >= ? AND b < ?).
+This is one test where ObjectBox does not perform as well as the others - it's possible that this operation
+does not currently use indexes in ObjectBox.
+
 ## Benchmark Details
 
 Some differences from the SQLite benchmarks:
@@ -33,6 +50,8 @@ Synchronous calls have the ability to block the UI / introduce stutter, so we be
 1. Does not measure UI performance during database operations yet. Despite the database operations being async, it may still
    block the UI Isolate in some cases.
 2. Only a single run of each test is recorded.
+3. No UI yet - all results are logged to the console.
+4. Does not test concurrent operations.
 
 ## Database-specific notes
 
