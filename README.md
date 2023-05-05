@@ -75,7 +75,11 @@ This has much better performance than the default implementation, and is a simpl
 
 ### Isar
 
-Uses async operations.
+Runs in "relaxed durability" mode. According to the docs:
+
+> relaxedDurability	Relaxes the durability guarantee to increase write performance. In case of a system crash (not app crash), it is possible to lose the last committed transaction. Corruption is not possible.
+
+This makes it the same guarantees as SQLite in WAL mode with `synchronous = NORMAL`, as used for sqlite_async.
 
 ### ObjectBox
 

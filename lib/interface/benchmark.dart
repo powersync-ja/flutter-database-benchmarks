@@ -20,7 +20,11 @@ class BenchmarkResult {
 }
 
 class BenchmarkResults {
+  String suite;
+
   List<BenchmarkResult> results = [];
+
+  BenchmarkResults(this.suite);
 
   Future<void> record(String name, Future<void> Function() callback) async {
     final stopwatch = Stopwatch()..start();
@@ -45,7 +49,7 @@ abstract class Benchmark {
   String get name;
 
   Future<BenchmarkResults> runAll() async {
-    BenchmarkResults results = BenchmarkResults();
+    BenchmarkResults results = BenchmarkResults(name);
     await setUp();
 
     var watch = Stopwatch()..start();

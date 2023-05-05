@@ -22,19 +22,37 @@ Future<void> main() async {
 
   await Isar.initializeIsarCore(download: true);
 
-  await test(SqfliteDBImpl(path));
-  await test(SqfliteBatchedImpl(path));
-  await test(SqliteAsyncDBImpl(path));
-  await test(SqliteAsyncBatchedImpl(path));
-  await test(IsarDBImpl(path));
-  await test(IsarBatchedImpl(path));
-  await test(ObjectBoxDBImpl(path));
+  List<BenchmarkResults> results = [
+    await test(SqfliteDBImpl(path)),
+    await test(SqfliteBatchedImpl(path)),
+    await test(SqliteAsyncDBImpl(path)),
+    await test(SqliteAsyncBatchedImpl(path)),
+    await test(IsarDBImpl(path)),
+    await test(IsarBatchedImpl(path)),
+    await test(ObjectBoxDBImpl(path)),
+  ];
+
+  BenchmarkResults first = results.first;
+  var s = ',Test';
+  for (var rr in results) {
+    s += ',${rr.suite}';
+  }
+  print('');
+  print(s);
+  for (var i = 0; i < first.results.length; i++) {
+    var test = first.results[i].test;
+    var s = ',$test';
+    for (var rr in results) {
+      var r3 = rr.results[i].duration.inMilliseconds;
+      s += ',$r3';
+    }
+    print(s);
+  }
+  print('');
 }
 
-Future<void> test(Benchmark bm) async {
+Future<BenchmarkResults> test(Benchmark bm) async {
   print(bm.name);
   final results = await bm.runAll();
-  print('');
-  print('\nTest,${bm.name}\n${results.toCsv()}');
-  print('');
+  return results;
 }
