@@ -18,7 +18,7 @@ but does demonstrate the overhead per transaction.  The WAL journal mode on SQLi
 
 Test 6: Not present, since it only creates indexes, which are avoided in these benchmarks.
 
-Test 7: This tests a "between" operation on an indexed column (WHERE b >= ? AND b < ?).
+Test 7: This tests a "between" operation on an indexed column - `WHERE b >= ? AND b < ?`.
 This is one test where ObjectBox does not perform as well as the others - it's possible that this operation
 does not currently use indexes in ObjectBox.
 
@@ -34,13 +34,13 @@ Some differences from the SQLite benchmarks:
 The relative runtime is expected to roughly match the SQLite performance from above, but will be slightly
 different because of the differences mentioned.
 
-For the implementation, many database engine contains two versions:
+For the implementation, most benchmarks have two versions:
 1. The default "obvious" implementation. Focus on ease of implementation rather than performance.
-   Only very simple performance optimizations are considered, e.g. combining writes into a single optimization.
+   * Only very simple performance optimizations are considered, for example combining writes into a single optimization.
 2. A "batched" implementation that aims to minimize the performance overhead of individual async operations.
-   This may introduce some additional complexity to batch operations, but increases performance.
-   Only performance optimizations readily available in the library's documentation or examples are considered.
-   This is done by either using a batch API provided by the library, or running synchronous operations in a separate Isolate.
+   * This may introduce some additional complexity to batch operations, but increases performance.
+   * Only performance optimizations readily available in the library's documentation or examples are considered.
+   * This is done by either using a batch API provided by the library, or running synchronous operations in a separate Isolate.
 
 Only asynchronous/non-blocking APIs are used, unless the code runs in a background Isolate.
 Synchronous calls have the ability to block the UI / introduce stutter, so we believe it best to avoid them completely.
