@@ -90,18 +90,14 @@ class IsarBatchedImpl extends Benchmark {
     await isar.txn(() async {
       var t2 = isar.isarT2s;
       for (int i = 0; i < 100; ++i) {
-        var rows = await t2
-            .filter()
-            .bBetween(i * 100, i * 100 + 1000, includeUpper: false)
-            .findAll();
+        final query =
+            t2.filter().bBetween(i * 100, i * 100 + 1000, includeUpper: false);
 
-        assertAlways(rows.length > 200);
-        assertAlways(rows.length < 300);
+        final count = await query.count();
+        final avg = await query.bProperty().average();
 
-        var sum = rows
-            .map((element) => element.b)
-            .reduce((value, element) => value + element);
-        var avg = sum / rows.length;
+        assertAlways(count > 200);
+        assertAlways(count < 300);
 
         assertAlways(avg > i * 100);
         assertAlways(avg < i * 100 + 1000);
@@ -114,16 +110,13 @@ class IsarBatchedImpl extends Benchmark {
     final t2 = isar.isarT2s;
     await isar.txn(() async {
       for (int i = 0; i < 100; ++i) {
-        var rows =
-            await t2.filter().cMatches('*${numberName(i + 1)}*').findAll();
+        final query = t2.filter().cMatches('*${numberName(i + 1)}*');
 
-        var sum = rows
-            .map((element) => element.b)
-            .reduce((value, element) => value + element);
-        var avg = sum / rows.length;
+        final count = await query.count();
+        final avg = await query.bProperty().average();
 
-        assertAlways(rows.length > 400);
-        assertAlways(rows.length < 12000);
+        assertAlways(count > 400);
+        assertAlways(count < 12000);
         assertAlways(avg > 30000);
       }
     });
@@ -138,16 +131,17 @@ class IsarBatchedImpl extends Benchmark {
     final t3 = isar.isarT3s;
     await isar.txn(() async {
       for (int i = 0; i < 5000; ++i) {
-        var rows = await t3
+        final query = await t3
             .where()
-            .bBetween(i * 100, i * 100 + 100, includeUpper: false)
-            .findAll();
+            .bBetween(i * 100, i * 100 + 100, includeUpper: false);
+        final count = await query.count();
+        final avg = await query.bProperty().average();
 
         if (i < 1000) {
-          assertAlways(rows.length > 10);
-          assertAlways(rows.length < 100);
+          assertAlways(count > 10);
+          assertAlways(count < 100);
         } else {
-          assertAlways(rows.isEmpty);
+          assertAlways(count == 0);
         }
       }
     });
